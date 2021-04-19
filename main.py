@@ -2,6 +2,7 @@ import praw
 import re
 import sys
 from collections import deque
+from time import sleep
 
 message = """
 "Ect" is a common misspelling of "etc," an abbreviated form of the Latin phrase "et cetera." Other abbreviated forms are **etc.**, **&c.**, **&c**, and **et cet.** The Latin translates as "et" to "and" + "cetera" to "the rest;" a literal translation to "and the rest" is the easiest way to remember how to use the phrase. 
@@ -24,30 +25,35 @@ count = 0
 running = True
 while running:
    comments = subreddit.comments(limit=None)
-   for comment in comments:
-      if comment.id in cache:
-         break
-      cache.append(comment.id)
-      count += 1
-      print ('Comments viewed:', count)
+   try: 
+      for comment in comments:
+         if comment.id in cache:
+            break
+         cache.append(comment.id)
 
-      # if comment.author.name is 'ectbot':
-      #    continue
+         if comment.author.name == 'ectbot':
+            print('Hi, self!')
+            continue
 
-      if comment.body is message:
-         print('Found self!')
-         # continue
+         # if comment.body is message:
+         #    print('Found self!')
+         #    continue
 
-      if re.search(ect_regex, comment.body) and not re.search(etc_regex, comment.body):
-         try:
-            print(comment.body)
-            print('http://www.reddit.com' + comment.permalink)
-            print('---------------------')
-            
-            # comment.reply(message)
+         if re.search(ect_regex, comment.body) and not re.search(etc_regex, comment.body):
+               print(comment.body)
+               print('http://www.reddit.com' + comment.permalink)
+               print('---------------------')
+               
+               comment.reply(message)
 
-         except KeyboardInterrupt:
-            print('Program stopped by user. Exiting...')
-            running = False
-         except Exception as e:
-            print("ERROR: ", e, file=sys.stderr)
+   except KeyboardInterrupt:
+      print('Program stopped by user. Exiting...')
+      running = False
+   except praw.errors.APIException as e:
+      print('[ERROR]:', e, file=sys.stderr)
+      print('sleeping 30 sec', file=sys.stderr)
+      sleep(30)       
+   except Exception as e:
+      print('ERROR: ', e, file=sys.stderr)
+      print('Swallowing error!', file=sys.stderr)
+      running = False
