@@ -11,7 +11,7 @@ message = """
 ^(I am a bot, and this action was performed automatically.)
 """
 ect_regex = '\W[Ee]ct(?:\W|$)'
-etc_regex = '\W[Ee]tc\W'
+etc_regex = '\W[Ee]tc(?:\W|$)'
 sub = 'pythonforengineers'
 cache = deque(maxlen=200) # maintain a cache to avoid duplicating effort
 
