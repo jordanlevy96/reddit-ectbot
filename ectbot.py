@@ -1,6 +1,7 @@
 import praw
 import re
 import sys
+import os
 from collections import deque
 from time import sleep
 
@@ -14,46 +15,87 @@ message = """
 ect_regex = '\W[Ee]ct(?:\W|$)'
 etc_regex = '\W[Ee]tc(?:\W|$)'
 sub = 'pythonforengineers'
-cache = deque(maxlen=200) # maintain a cache to avoid duplicating effort
+botname = 'ectbot'
+cache = deque(maxlen=200) # maintain a cache to avoid duplicating effort (note: this does not seem to help when restricted to a single subreddit
+# I guess it loops around and starts viewing old comments again?)
 
-reddit = praw.Reddit('DEFAULT', config_interpolation='basic')
-subreddit = reddit.subreddit(sub)
-bot = reddit.redditor('ectbot')
 
-count = 0
+def init():
+   """ initialize app, creating reddit object
+      uses praw.ini file if available, otherwise expects environment variables
+   """
 
-running = True
-while running:
-   comments = subreddit.comments(limit=None)
-   try: 
-      for comment in comments:
-         if comment.id in cache:
-            break
-         cache.append(comment.id)
+   reddit = None
 
-         if comment.author.name == 'ectbot':
-            print('Hi, self!')
-            continue
+   try:
+      if os.path.exists('./praw.ini'):
+         print('Starting up using praw.ini...')
+         reddit = praw.Reddit('DEFAULT', config_interpolation='basic')
+      else:
+         print('Starting up using environment variables...')
+         reddit_username = os.environ['reddit_username']
+         reddit_password = os.environ['reddit_password']
+         client_id = os.environ['client_id']
+         client_secret = os.environ['client_secret']
+         reddit = praw.Reddit(username = reddit_username,
+                password = reddit_password,
+                client_id = client_id,
+                client_secret = client_secret,
+                user_agent = botname)
 
-         # if comment.body is message:
-         #    print('Found self!')
-         #    continue
-
-         if re.search(ect_regex, comment.body) and not re.search(etc_regex, comment.body):
-               print(comment.body)
-               print('http://www.reddit.com' + comment.permalink)
-               print('---------------------')
-               
-               comment.reply(message)
-
-   except KeyboardInterrupt:
-      print('Program stopped by user. Exiting...')
-      running = False
-   except praw.errors.APIException as e:
-      print('[ERROR]:', e, file=sys.stderr)
-      print('sleeping 30 sec', file=sys.stderr)
-      sleep(30)       
    except Exception as e:
-      print('ERROR: ', e, file=sys.stderr)
-      print('Swallowing error!', file=sys.stderr)
-      running = False
+      print('Failed to log in!', sys.stderr)
+      print(e, sys.stderr)
+      sys.exit(1)
+
+   if not reddit:
+         raise Exception('Failed to create Reddit object.')
+
+   return reddit
+
+def ectbot(reddit):
+   subreddit = reddit.subreddit(sub)
+   bot = reddit.redditor('ectbot')
+   running = True
+   while running:
+      comments = subreddit.comments(limit=None)
+      try: 
+         for comment in comments:
+            if comment.id in cache:
+               break
+            cache.append(comment.id)
+
+            if comment.author is None:
+               # ignore comments from deleted users
+               continue
+
+            if comment.author.name == 'ectbot':
+               print('Found ectbot comment at http://www.reddit.com' + comment.permalink)
+               continue
+
+            if re.search(ect_regex, comment.body) and not re.search(etc_regex, comment.body):
+                  print('---------------------')
+                  print('Replying to ' + comment.author.name + ', who said:')
+                  print(comment.body)
+                  print('http://www.reddit.com' + comment.permalink)
+                  print('---------------------')
+                  
+                  comment.reply(message)
+
+      except KeyboardInterrupt:
+         print('Program stopped by user. Exiting...')
+         running = False
+      except praw.errors.APIException as e:
+         print('[ERROR]:', e, file=sys.stderr)
+         print('Sleeping 30 sec...', file=sys.stderr)
+         sleep(30)       
+      except Exception as e:
+         print('[ERROR]: ', e, file=sys.stderr)
+         running = False
+
+def main():
+   reddit = init()
+   ectbot(reddit)
+
+if __name__ == '__main__':
+   main()
