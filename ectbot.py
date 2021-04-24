@@ -6,6 +6,7 @@ from collections import deque
 from time import sleep
 
 message = """
+Hello! You have made the mistake of writing "ect" instead of "etc!"
 "Ect" is a common misspelling of "etc," an abbreviated form of the Latin phrase "et cetera." Other abbreviated forms are **etc.**, **&c.**, **&c**, and **et cet.** The Latin translates as "et" to "and" + "cetera" to "the rest;" a literal translation to "and the rest" is the easiest way to remember how to use the phrase. 
 
 [Check out the wikipedia entry if you want to learn more.](https://en.wikipedia.org/wiki/Et_cetera)
@@ -52,11 +53,15 @@ def init():
    if not reddit:
          raise Exception('Failed to create Reddit object.')
 
+   print('Successfully signed in!')
    return reddit
 
 def ectbot(reddit):
    subreddit = reddit.subreddit(sub)
    bot = reddit.redditor('ectbot')
+
+   print('Scraping Reddit comments for ects...')
+
    running = True
    while running:
       comments = subreddit.comments(limit=None)
