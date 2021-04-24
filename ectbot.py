@@ -72,10 +72,6 @@ def ectbot(reddit):
                break
             cache.append(comment.id)
 
-            if reddit.subreddit(comment.subreddit.display_name).user_is_banned:
-               # ignore comments in banned subreddits
-               continue
-
             if comment.author is None:
                # ignore comments from deleted users
                continue
@@ -87,10 +83,15 @@ def ectbot(reddit):
 
             if re.search(ect_regex, comment.body) and not re.search(etc_regex, comment.body):
                   print('---------------------')
-                  print('Replying to ' + comment.author.name + ', who said:')
+                  print('Found an "etc" by ' + comment.author.name + ', who said:')
                   print(comment.body)
                   print('http://www.reddit.com' + comment.permalink)
                   print('---------------------')
+
+                  if reddit.subreddit(comment.subreddit.display_name).user_is_banned:
+                     # ignore comments in banned subreddits
+                     print('ectbot is banned from', comment.subreddit.display_name)
+                     continue
                   
                   comment.reply(message)
 
