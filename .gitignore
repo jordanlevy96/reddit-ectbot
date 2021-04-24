@@ -1,2 +1,4 @@
 .vscode/
 praw.ini
+__pycache__/
+*.pyc
