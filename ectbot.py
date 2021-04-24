@@ -37,7 +37,7 @@ def init():
          reddit_password = os.environ['reddit_password']
          client_id = os.environ['client_id']
          client_secret = os.environ['client_secret']
-         user_agent = os.eviron['user_agent']
+         user_agent = os.environ['user_agent']
          reddit = praw.Reddit(username = reddit_username,
                 password = reddit_password,
                 client_id = client_id,
