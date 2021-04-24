@@ -86,7 +86,7 @@ def ectbot(reddit):
       except KeyboardInterrupt:
          print('Program stopped by user. Exiting...')
          running = False
-      except praw.errors.APIException as e:
+      except praw.exceptions.APIException as e:
          print('[ERROR]:', e, file=sys.stderr)
          print('Sleeping 30 sec...', file=sys.stderr)
          sleep(30)       
