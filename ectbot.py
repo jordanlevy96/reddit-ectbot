@@ -14,7 +14,7 @@ message = """
 """
 ect_regex = '\W[Ee]ct(?:\W|$)'
 etc_regex = '\W[Ee]tc(?:\W|$)'
-sub = 'pythonforengineers'
+sub = 'all'
 botname = 'ectbot'
 cache = deque(maxlen=200) # maintain a cache to avoid duplicating effort (note: this does not seem to help when restricted to a single subreddit
 # I guess it loops around and starts viewing old comments again?)
