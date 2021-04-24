@@ -72,11 +72,16 @@ def ectbot(reddit):
                break
             cache.append(comment.id)
 
+            if reddit.subreddit(comment.subreddit.display_name).user_is_banned:
+               # ignore comments in banned subreddits
+               continue
+
             if comment.author is None:
                # ignore comments from deleted users
                continue
 
             if comment.author.name == 'ectbot':
+               # ignore comments made from self
                print('Found ectbot comment at http://www.reddit.com' + comment.permalink)
                continue
 
