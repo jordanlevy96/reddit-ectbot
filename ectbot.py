@@ -77,16 +77,16 @@ def commenter_requested_delete(comment, commenter):
 def ectbot(reddit):
    subreddit = reddit.subreddit(sub)
    bot = reddit.redditor('ectbot')
-   ectcomments = 0
+   ectcomments = 50 # check comments on startup
 
    print('Starting up ectbot...')
 
    running = True
    while running:
 
-      if (ectcomments >= 90):
-         print('Checking last 100 ectbot posts...')
-         last50 = bot.comments.new(limit=100)
+      if (ectcomments > 40):
+         print('Checking last 50 ectbot posts...')
+         last50 = bot.comments.new(limit=50)
          for c in last50:
             handle_own_comment(c)
          ectcomments = 0
@@ -125,6 +125,7 @@ def ectbot(reddit):
                      continue
                   
                   comment.reply(message)
+                  print('Ect corrected!')
                   ectcomments += 1
 
       except KeyboardInterrupt:
