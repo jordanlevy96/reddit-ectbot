@@ -112,15 +112,13 @@ def ectbot(reddit, bot):
                   
                   comment.reply(message)
                   print('Ect corrected!')
-                  ectcomments += 1
 
-            # trigger a history check every hour
+            # trigger a history check every hour and on startup
             current_time = time.time()
             if proc is None or (current_time >= last_history_check + seconds_in_hour and proc.poll() is not None):
                last_history_check = current_time
                print('Forking process to check history...')
                proc = subprocess.Popen(['python', 'ectbot.py', '--check-history'])
-               print('Forked process started!')
 
       except KeyboardInterrupt:
          print('Program stopped by user. Exiting...')
