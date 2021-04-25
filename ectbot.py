@@ -2,8 +2,8 @@ import praw
 import re
 import sys
 import os
-from collections import deque
-from time import sleep
+import time
+import subprocess
 
 message = """
 Hello! You have made the mistake of writing "ect" instead of "etc!"
@@ -18,6 +18,7 @@ ect_regex = '\W[Ee]ct(?:\W|$)'
 etc_regex = '\W[Ee]tc(?:\W|$)'
 sub = 'all'
 botname = 'ectbot'
+seconds_in_hour = 3600
 
 def init():
    """ initialize app, creating reddit object
@@ -71,10 +72,10 @@ def commenter_requested_delete(comment, commenter):
 
    return False
 
-def ectbot(reddit):
+def ectbot(reddit, bot):
    subreddit = reddit.subreddit(sub)
-   bot = reddit.redditor('ectbot')
-   ectcomments = 50 # check comments on startup
+   last_history_check = time.time()
+   proc = None
 
    print('Starting up ectbot...')
 
@@ -84,13 +85,6 @@ def ectbot(reddit):
       comments = subreddit.stream.comments(skip_existing=True)
       try: 
          for comment in comments:
-            if (ectcomments > 49):
-               print('Checking last 50 ectbot posts...')
-               last50 = bot.comments.new(limit=50)
-               for c in last50:
-                  handle_own_comment(c)
-               ectcomments = 0
-
             if comment.author is None:
                # ignore comments from deleted users
                continue
@@ -102,7 +96,6 @@ def ectbot(reddit):
                print('~~~~~~~~~~~~~~~~')
 
                handle_own_comment(comment)
-
                continue
 
             if re.search(ect_regex, comment.body) and not re.search(etc_regex, comment.body):
@@ -121,20 +114,48 @@ def ectbot(reddit):
                   print('Ect corrected!')
                   ectcomments += 1
 
+            # trigger a history check every hour
+            current_time = time.time()
+            if proc is None or (current_time >= last_history_check + seconds_in_hour and proc.poll() is not None):
+               last_history_check = current_time
+               print('Forking process to check history...')
+               proc = subprocess.Popen(['python', 'ectbot.py', '--check-history'])
+               print('Forked process started!')
+
       except KeyboardInterrupt:
          print('Program stopped by user. Exiting...')
          running = False
       except praw.exceptions.APIException as e:
          print('[ERROR]:', e, file=sys.stderr)
          print('Sleeping 30 sec...', file=sys.stderr)
-         sleep(30)       
+         time.sleep(30)       
       except Exception as e:
          print('[ERROR]: ', e, file=sys.stderr)
          running = False
 
+def check_history(reddit, bot):
+   count = 0
+   old_comments = bot.comments.new(limit=None)
+   for comment in old_comments:
+      handle_own_comment(comment)
+      count += 1
+   print('Checked all', count, 'old ectbot comments')
+
 def main():
    reddit = init()
-   ectbot(reddit)
+   bot = reddit.redditor('ectbot')
+
+   if len(sys.argv) > 1:
+      arg = sys.argv[1]
+      print('ectbot started with option:', arg)
+      if arg != '--check-history':
+         print('Anamalous arg found:', arg, file=sys.stderr)
+         sys.exit(2)
+      else:
+         print('Checking ectbot history...')
+         check_history(reddit, bot)
+   else:
+      ectbot(reddit, bot)
 
 if __name__ == '__main__':
    main()

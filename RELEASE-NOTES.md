@@ -2,6 +2,9 @@
 
 [Source](https://github.com/jordanlevy96/reddit-ectbot)
 
+### 25 April 2021 - v1.3.0
+- fork a process to check ectbot history once per hour
+
 ### 25 April 2021 - v1.2.1
 - use lower() to handle more !delete calls
 - handle ectbot comments with deleted parents
