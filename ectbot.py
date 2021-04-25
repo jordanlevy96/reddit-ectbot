@@ -60,8 +60,10 @@ def init():
 def handle_own_comment(comment):
    commenter = comment.parent().author.name
    if comment.score < 0:
+      print('Deleting comment', comment.id, 'due to low score.')
       comment.delete()
    elif commenter_requested_delete(comment, commenter):
+      print('Deleting comment', comment.id, 'due to commenter request.')
       comment.delete()
 
 def commenter_requested_delete(comment, commenter):
