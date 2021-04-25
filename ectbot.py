@@ -12,7 +12,7 @@ Hello! You have made the mistake of writing "ect" instead of "etc!"
 
 [Check out the wikipedia entry if you want to learn more.](https://en.wikipedia.org/wiki/Et_cetera)
 
-^(I am a bot, and this action was performed automatically.)
+^(I am a bot, and this action was performed automatically. Comments with a score less than zero will be automatically removed. If I commented on your post and you don't like it, reply with "!delete" and I will remove the post, regardless of score. Message me for bug reports.)
 """
 ect_regex = '\W[Ee]ct(?:\W|$)'
 etc_regex = '\W[Ee]tc(?:\W|$)'
@@ -57,14 +57,40 @@ def init():
    print('Successfully signed in!')
    return reddit
 
+def handle_own_comment(comment):
+   commenter = comment.parent().author.name
+   if comment.score < 0:
+      comment.delete()
+   elif commenter_requested_delete(comment, commenter):
+      comment.delete()
+
+def commenter_requested_delete(comment, commenter):
+   for reply in comment.replies:
+      if reply.author.name == commenter:
+         if "!delete" in reply.body:
+            return True
+
+   return False
+
 def ectbot(reddit):
    subreddit = reddit.subreddit(sub)
    bot = reddit.redditor('ectbot')
+   ectcomments = 0
 
-   print('Scraping Reddit comments for ects...')
+   print('Starting up ectbot...')
 
    running = True
    while running:
+
+      if (ectcomments >= 90):
+         print('Checking last 100 ectbot posts...')
+         last50 = bot.comments.new(limit=100)
+         for c in last50:
+            handle_own_comment(c)
+         ectcomments = 0
+
+      print('Viewing more comments...')
+
       comments = subreddit.comments(limit=None)
       try: 
          for comment in comments:
@@ -79,6 +105,9 @@ def ectbot(reddit):
             if comment.author.name == 'ectbot':
                # ignore comments made from self
                print('Found ectbot comment at http://www.reddit.com' + comment.permalink)
+
+               handle_own_comment(comment)
+
                continue
 
             if re.search(ect_regex, comment.body) and not re.search(etc_regex, comment.body):
@@ -94,6 +123,7 @@ def ectbot(reddit):
                      continue
                   
                   comment.reply(message)
+                  ectcomments += 1
 
       except KeyboardInterrupt:
          print('Program stopped by user. Exiting...')
