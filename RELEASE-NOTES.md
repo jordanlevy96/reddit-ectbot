@@ -2,6 +2,9 @@
 
 [Source](https://github.com/jordanlevy96/reddit-ectbot)
 
+### 25 April 2021 - v1.2.1
+- use lower() to handle more !delete calls
+
 ### 25 April 2021 - v1.2.0
 - added deletion functionality
 - replaced cache with stream to handle double commenting

@@ -66,7 +66,7 @@ def handle_own_comment(comment):
 def commenter_requested_delete(comment, commenter):
    for reply in comment.replies:
       if reply.author.name == commenter:
-         if "!delete" in reply.body:
+         if "!delete" in reply.body.lower():
             return True
 
    return False
