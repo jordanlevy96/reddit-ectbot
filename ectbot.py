@@ -18,9 +18,6 @@ ect_regex = '\W[Ee]ct(?:\W|$)'
 etc_regex = '\W[Ee]tc(?:\W|$)'
 sub = 'all'
 botname = 'ectbot'
-cache = deque(maxlen=200) # maintain a cache to avoid duplicating effort (note: this does not seem to help when restricted to a single subreddit
-# I guess it loops around and starts viewing old comments again?)
-
 
 def init():
    """ initialize app, creating reddit object
@@ -84,21 +81,15 @@ def ectbot(reddit):
    running = True
    while running:
 
-      if (ectcomments > 40):
-         print('Checking last 50 ectbot posts...')
-         last50 = bot.comments.new(limit=50)
-         for c in last50:
-            handle_own_comment(c)
-         ectcomments = 0
-
-      print('Viewing more comments...')
-
-      comments = subreddit.comments(limit=None)
+      comments = subreddit.stream.comments(skip_existing=True)
       try: 
          for comment in comments:
-            if comment.id in cache:
-               break
-            cache.append(comment.id)
+            if (ectcomments > 49):
+               print('Checking last 50 ectbot posts...')
+               last50 = bot.comments.new(limit=50)
+               for c in last50:
+                  handle_own_comment(c)
+               ectcomments = 0
 
             if comment.author is None:
                # ignore comments from deleted users
@@ -106,7 +97,9 @@ def ectbot(reddit):
 
             if comment.author.name == 'ectbot':
                # ignore comments made from self
+               print('~~~~~~~~~~~~~~~~')
                print('Found ectbot comment at http://www.reddit.com' + comment.permalink)
+               print('~~~~~~~~~~~~~~~~')
 
                handle_own_comment(comment)
 
