@@ -17,5 +17,4 @@ GitHub user dmarx created [a valuable example of a reddit bot](https://gist.gith
 The [Python For Engineers](https://www.pythonforengineers.com/build-a-reddit-bot-part-1/) Reddit bot tutorial was also a good resource for learning how to write this (and is more up-to-date than the example above).
 
 ## TODOs
-- remove unused environment files from figuring out deployment
 - send myself an email if ectbot goes down
