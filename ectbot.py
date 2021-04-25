@@ -55,11 +55,11 @@ def init():
    return reddit
 
 def handle_own_comment(comment):
-   commenter = comment.parent().author.name
+   parent = comment.parent()
    if comment.score < 0:
       print('Deleting comment', comment.id, 'due to low score.')
       comment.delete()
-   elif commenter_requested_delete(comment, commenter):
+   elif parent.author is not None and commenter_requested_delete(comment, parent.author.name):
       print('Deleting comment', comment.id, 'due to commenter request.')
       comment.delete()
 
@@ -80,7 +80,7 @@ def ectbot(reddit):
 
    running = True
    while running:
-
+      print('Creating comment stream...')
       comments = subreddit.stream.comments(skip_existing=True)
       try: 
          for comment in comments:

@@ -4,6 +4,7 @@
 
 ### 25 April 2021 - v1.2.1
 - use lower() to handle more !delete calls
+- handle ectbot comments with deleted parents
 
 ### 25 April 2021 - v1.2.0
 - added deletion functionality
