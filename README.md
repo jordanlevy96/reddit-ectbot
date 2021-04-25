@@ -18,4 +18,4 @@ The [Python For Engineers](https://www.pythonforengineers.com/build-a-reddit-bot
 
 ## TODOs
 - remove unused environment files from figuring out deployment
-- auto-delete comments that get downvoted or if the user requests deletion
+- send myself an email if ectbot goes down
