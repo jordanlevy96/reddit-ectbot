@@ -19,6 +19,7 @@ etc_regex = '\W[Ee]tc(?:\W|$)'
 sub = 'all'
 botname = 'ectbot'
 seconds_in_hour = 3600
+inappropriate_subs = ['depression', 'SuicideWatch', 'SuicideBereavement', 'anxiety', 'stopselfharm']
 
 def init():
    """ initialize app, creating reddit object
@@ -57,6 +58,9 @@ def init():
 
 def handle_own_comment(comment):
    parent = comment.parent()
+   # if parent.author is not None:
+   #    print('Handling comment triggered by', parent.author.name)
+
    if comment.score < 0:
       print('Deleting comment', comment.id, 'due to low score.')
       comment.delete()
@@ -65,9 +69,11 @@ def handle_own_comment(comment):
       comment.delete()
 
 def commenter_requested_delete(comment, commenter):
+   # print('Number of replies:', len(comment.replies))
    for reply in comment.replies:
+      # print('Viewing reply:', reply.body)
       if reply.author.name == commenter:
-         if "!delete" in reply.body.lower():
+         if '!delete' in reply.body.lower():
             return True
 
    return False
@@ -105,8 +111,13 @@ def ectbot(reddit, bot):
                   print('http://www.reddit.com' + comment.permalink)
                   print('---------------------')
 
-                  if reddit.subreddit(comment.subreddit.display_name).user_is_banned:
-                     # ignore comments in banned subreddits
+                  found_sub = comment.subreddit.display_name
+
+                  if found_sub in inappropriate_subs:
+                     print('bots should not comment in depression-related subs')
+                     continue
+
+                  if reddit.subreddit(found_sub).user_is_banned:
                      print('ectbot is banned from', comment.subreddit.display_name)
                      continue
                   
