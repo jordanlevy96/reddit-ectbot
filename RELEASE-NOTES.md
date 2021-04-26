@@ -2,6 +2,10 @@
 
 [Source](https://github.com/jordanlevy96/reddit-ectbot)
 
+### 26 April 2021 - v1.3.1
+- ignore inappropriate subreddits (e.g. /r/depression)
+- comment.refresh() must be called to view replies -> !delete requests should work now
+
 ### 25 April 2021 - v1.3.0
 - fork a process to check ectbot history once per hour
 
