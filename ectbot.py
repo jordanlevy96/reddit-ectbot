@@ -58,8 +58,6 @@ def init():
 
 def handle_own_comment(comment):
    parent = comment.parent()
-   # if parent.author is not None:
-   #    print('Handling comment triggered by', parent.author.name)
 
    if comment.score < 0:
       print('Deleting comment', comment.id, 'due to low score.')
@@ -69,9 +67,9 @@ def handle_own_comment(comment):
       comment.delete()
 
 def commenter_requested_delete(comment, commenter):
-   # print('Number of replies:', len(comment.replies))
-   for reply in comment.replies:
-      # print('Viewing reply:', reply.body)
+   comment.refresh() # refresh is necessary to get replies
+   replies = comment.replies
+   for reply in replies:
       if reply.author.name == commenter:
          if '!delete' in reply.body.lower():
             return True
@@ -144,6 +142,7 @@ def ectbot(reddit, bot):
 
 def check_history(reddit, bot):
    count = 0
+   # TODO: change limit to a reasonable value, such that comments older than e.g. a month are not checked
    old_comments = bot.comments.new(limit=None)
    for comment in old_comments:
       handle_own_comment(comment)
