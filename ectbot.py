@@ -104,7 +104,7 @@ def ectbot(reddit, bot):
 
             if re.search(ect_regex, comment.body) and not re.search(etc_regex, comment.body):
                   print('---------------------')
-                  print('Found an "etc" by ' + comment.author.name + ', who said:')
+                  print('Found an "ect" by ' + comment.author.name + ', who said:')
                   print(comment.body)
                   print('http://www.reddit.com' + comment.permalink)
                   print('---------------------')

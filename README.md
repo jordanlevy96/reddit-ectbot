@@ -19,3 +19,4 @@ The [Python For Engineers](https://www.pythonforengineers.com/build-a-reddit-bot
 ## TODOs
 - send myself an email if ectbot goes down
 - create option to ignore certain users
+- ignore ects inside a blockquote
