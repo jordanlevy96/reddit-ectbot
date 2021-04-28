@@ -6,7 +6,7 @@ import time
 import subprocess
 
 message = """
-Hello! You have made the mistake of writing "ect" instead of "etc!"
+Hello! You have made the mistake of writing "ect" instead of "etc."
 
 "Ect" is a common misspelling of "etc," an abbreviated form of the Latin phrase "et cetera." Other abbreviated forms are **etc.**, **&c.**, **&c**, and **et cet.** The Latin translates as "et" to "and" + "cetera" to "the rest;" a literal translation to "and the rest" is the easiest way to remember how to use the phrase. 
 
