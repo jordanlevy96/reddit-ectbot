@@ -70,7 +70,7 @@ def commenter_requested_delete(comment, commenter):
    comment.refresh() # refresh is necessary to get replies
    replies = comment.replies
    for reply in replies:
-      if reply.author.name == commenter:
+      if reply.author is not None and reply.author.name == commenter:
          if '!delete' in reply.body.lower():
             return True
 
