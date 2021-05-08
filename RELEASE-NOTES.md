@@ -2,6 +2,10 @@
 
 [Source](https://github.com/jordanlevy96/reddit-ectbot)
 
+### 8 May 2021 - v1.4.0
+- ignore ects in blockquotes
+- add debug run option
+
 ### 28 April 2021 - v1.3.2
 - fix for replies from deleted accounts
 
