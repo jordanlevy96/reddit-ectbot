@@ -14,12 +14,14 @@ Hello! You have made the mistake of writing "ect" instead of "etc."
 
 ^(I am a bot, and this action was performed automatically. Comments with a score less than zero will be automatically removed. If I commented on your post and you don't like it, reply with "!delete" and I will remove the post, regardless of score. Message me for bug reports.)
 """
-ect_regex = '\W[Ee]ct(?:\W|$)'
+ect_regex = '^[^>].*\W+[Ee]ct(?:\W|$)*'
 etc_regex = '\W[Ee]tc(?:\W|$)'
 sub = 'all'
 botname = 'ectbot'
 seconds_in_hour = 3600
 inappropriate_subs = ['depression', 'SuicideWatch', 'SuicideBereavement', 'anxiety', 'stopselfharm']
+skip_history_check = False
+one_and_done = False
 
 def init():
    """ initialize app, creating reddit object
@@ -102,7 +104,7 @@ def ectbot(reddit, bot):
                handle_own_comment(comment)
                continue
 
-            if re.search(ect_regex, comment.body) and not re.search(etc_regex, comment.body):
+            if re.search(ect_regex, comment.body, re.MULTILINE) and not re.search(etc_regex, comment.body):
                   print('---------------------')
                   print('Found an "ect" by ' + comment.author.name + ', who said:')
                   print(comment.body)
@@ -121,6 +123,12 @@ def ectbot(reddit, bot):
                   
                   comment.reply(message)
                   print('Ect corrected!')
+
+                  if one_and_done:
+                     sys.exit()
+
+            if skip_history_check:
+               continue
 
             # trigger a history check every hour and on startup
             current_time = time.time()
@@ -156,12 +164,19 @@ def main():
    if len(sys.argv) > 1:
       arg = sys.argv[1]
       print('ectbot started with option:', arg)
-      if arg != '--check-history':
+      if arg != '--check-history' and arg != '--debug':
          print('Anamalous arg found:', arg, file=sys.stderr)
          sys.exit(2)
-      else:
+      elif arg == '--check-history':
          print('Checking ectbot history...')
          check_history(reddit, bot)
+      elif arg == '--debug':
+         global skip_history_check
+         global one_and_done
+         skip_history_check = True
+         one_and_done = True
+         print('Debug mode on!')
+         ectbot(reddit, bot)
    else:
       ectbot(reddit, bot)
 
