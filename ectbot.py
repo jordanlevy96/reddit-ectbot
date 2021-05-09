@@ -14,7 +14,7 @@ Hello! You have made the mistake of writing "ect" instead of "etc."
 
 ^(I am a bot, and this action was performed automatically. Comments with a score less than zero will be automatically removed. If I commented on your post and you don't like it, reply with "!delete" and I will remove the post, regardless of score. Message me for bug reports.)
 """
-ect_regex = '^[^>].*\W+[Ee]ct(?:\W|$)*'
+ect_regex = '^[^>]+\W+[Ee]ct(?:\W|$)'
 etc_regex = '\W[Ee]tc(?:\W|$)'
 sub = 'all'
 botname = 'ectbot'
