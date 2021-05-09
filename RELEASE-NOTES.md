@@ -2,6 +2,9 @@
 
 [Source](https://github.com/jordanlevy96/reddit-ectbot)
 
+### 9 May 2021 - v1.4.1
+- fix bug in regex producing bad matches
+
 ### 8 May 2021 - v1.4.0
 - ignore ects in blockquotes
 - add debug run option
