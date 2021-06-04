@@ -20,6 +20,73 @@ sub = 'all'
 botname = 'ectbot'
 seconds_in_hour = 3600
 inappropriate_subs = ['depression', 'SuicideWatch', 'SuicideBereavement', 'anxiety', 'stopselfharm']
+other_ignored = [
+    "anime", 
+    "asianamerican", 
+    "askhistorians", 
+    "askscience", 
+    "askreddit", 
+    "aww", 
+    "chicagosuburbs", 
+    "cosplay", 
+    "cumberbitches", 
+    "d3gf", 
+    "deer", 
+    "depression", 
+    "depthhub", 
+    "drinkingdollars", 
+    "forwardsfromgrandma", 
+    "geckos", 
+    "giraffes", 
+    "grindsmygears", 
+    "indianfetish", 
+    "me_irl", 
+    "misc", 
+    "movies", 
+    "mixedbreeds", 
+    "news", 
+    "newtotf2", 
+    "omaha", 
+    "petstacking", 
+    "pics", 
+    "pigs", 
+    "politicaldiscussion", 
+    "politics", 
+    "programmingcirclejerk", 
+    "raerthdev", 
+    "rants", 
+    "runningcirclejerk", 
+    "salvia", 
+    "science", 
+    "seiko", 
+    "shoplifting", 
+    "sketches", 
+    "sociopath", 
+    "suicidewatch", 
+    "talesfromtechsupport",
+    "torrent",
+    "torrents",
+    "trackers",
+    "tr4shbros", 
+    "unitedkingdom",
+    "crucibleplaybook",
+    "cassetteculture",
+    "italy_SS",
+    "DimmiOuija",
+    "benfrick",
+    "bsa",
+    "futurology",
+    "graphic_design",
+    "historicalwhatif",
+    "lolgrindr",
+    "malifaux",
+    "nfl",
+    "toonami",
+    "trumpet",
+    "ps2ceres",
+    "duelingcorner"
+  ]
+
 skip_history_check = False
 one_and_done = False
 
@@ -115,6 +182,14 @@ def ectbot(reddit, bot):
 
                   if found_sub in inappropriate_subs:
                      print('bots should not comment in depression-related subs')
+                     continue
+
+                  if found_sub in other_ignored:
+                     print('Comment found in other inappropriate sub')
+                     continue
+
+                  if found_sub == 'ect':
+                     print('Ignoring comments in /r/ect')
                      continue
 
                   if reddit.subreddit(found_sub).user_is_banned:
